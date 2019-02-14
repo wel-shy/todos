@@ -25,4 +25,5 @@ describe("App", () => {
   require("./modules/home");
   require("./modules/auth");
   require("./modules/middleware");
+  require("./modules/todo");
 });
