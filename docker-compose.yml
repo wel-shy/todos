@@ -14,8 +14,8 @@ services:
         - mongo
       links:
         - mongo
-      # environment:
-      #   MONGO_URI: mongodb://mongo/stub
+      environment:
+         MONGO_URI: mongodb://mongo/todo
   mongo:
     image: mongo
     ports:

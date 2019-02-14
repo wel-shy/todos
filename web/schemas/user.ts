@@ -1,18 +1,18 @@
-import { Schema, Document } from 'mongoose'
+import { Document, Schema } from "mongoose";
 
 const schemaOptions = {
-  timestamps: true
-}
+  timestamps: true,
+};
 
 /**
  * User interface extending the Mongoose.Document
  */
 export interface IUser extends Document {
-  username: string
-  password: string
-  iv: string
-  createdAt: string
-  updatedAt: string
+  username: string;
+  password: string;
+  iv: string;
+  createdAt: string;
+  updatedAt: string;
 }
 
 /**
@@ -20,18 +20,18 @@ export interface IUser extends Document {
  * @type {module:mongoose.Schema}
  */
 export const UserSchema = new Schema({
-  username: {
-    type: String,
+  iv: {
     required: true,
-    index: true,
-    unique: true
+    type: String,
   },
   password: {
+    required: true,
     type: String,
-    required: true
   },
-  iv: {
+  username: {
+    index: true,
+    required: true,
     type: String,
-    required: true
-  }
-}, schemaOptions)
+    unique: true,
+  },
+}, schemaOptions);
