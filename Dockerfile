@@ -8,6 +8,7 @@ RUN mkdir /app
 
 # Set the working directory to app.
 WORKDIR /app
+RUN mkdir -p /dist
 
 
 COPY ./package.json /app/package.json
@@ -17,20 +18,21 @@ COPY ./package.json /app/package.json
 RUN npm install
 
 
-# Install nodemon
-RUN npm install -g nodemon typescript
-
 COPY .env /app/.env
 COPY app.ts /app/app.ts
 COPY tsconfig.json /app/tsconfig.json
 COPY web /app/web
 COPY test /app/test
 
+
 RUN npm run build
+RUN npx tsc
+RUN ls -la /dist
+
 
 # Expose port 80
 EXPOSE 80
 
 
 # Start the server.
-CMD nodemon dist/app.js
+CMD npx nodemon dist/app.js

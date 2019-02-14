@@ -2,26 +2,57 @@ import models from "../../models";
 import { Reply } from "../../reply";
 import {IUser} from "../../schemas/user";
 
-import { NextFunction, Request, Response, Router } from "express";
-import checkToken from "../../middleware/authenticate";
+import { NextFunction, Request, Response } from "express";
+import {checkToken} from "../../middleware/authenticate";
+import {ResourceRouter} from "../resource";
 
-let router: Router;
-
-/**
- * Returns router for user
- * @returns {e.Router}
- */
-const user = () => {
-  router = Router();
-
-  // User must be authorised for routes below
-  router.use(checkToken);
+export class UserRouter extends ResourceRouter {
+  constructor() {
+    super();
+    this.addMiddleware(checkToken);
+    this.addDefaultRoutes();
+  }
 
   /**
-   * Return the user's profile
+   * Destory a user
+   * @param {e.Request} req
+   * @param {e.Response} res
+   * @param {e.NextFunction} next
+   * @returns {Promise<void | e.Response>}
    */
-  router.get("/me", async (req: Request, res: Response, next: NextFunction) => {
-    // Check if there is an error higher up the middleware chain and skip endpoint
+  public async destroy(req: Request, res: Response, next: NextFunction): Promise<void | Response> {
+    if (res.locals.error) {
+      return next(new Error(`${res.locals.error}`));
+    }
+    const userId: string = res.locals.user.id;
+    try {
+      await models.User.deleteOne({_id: userId});
+    } catch (e) {
+      return next(e);
+    }
+
+    return res.json(new Reply(200, "success", false, {}))
+  }
+
+  /**
+   * Get all users
+   * @param {e.Request} req
+   * @param {e.Response} res
+   * @param {e.NextFunction} next
+   * @returns {Promise<void | e.Response> | void}
+   */
+  public index(req: Request, res: Response, next: NextFunction): Promise<void | Response> | void {
+    return undefined;
+  }
+
+  /**
+   * Get a user
+   * @param {e.Request} req
+   * @param {e.Response} res
+   * @param {e.NextFunction} next
+   * @returns {Promise<void | e.Response>}
+   */
+  public async show(req: Request, res: Response, next: NextFunction): Promise<void | Response> {
     if (res.locals.error) {
       return next(new Error(`${res.locals.error}`))
     }
@@ -30,31 +61,33 @@ const user = () => {
     const userId: string = res.locals.user.id;
     let user: IUser;
     try {
-      user = await models.User.findOne({ _id: userId })
+      user = await models.User.findOne({_id: userId})
     } catch (e) {
       e.message = "500";
       return next(e)
     }
-    return res.json(new Reply(200, "success", false, { user }));
-  });
+    return res.json(new Reply(200, "success", false, {user}));
+  }
 
   /**
-   * Delete the user from the database
+   * Store a user, handled in auth
+   * @param {e.Request} req
+   * @param {e.Response} res
+   * @param {e.NextFunction} next
+   * @returns {Promise<void | e.Response> | void}
    */
-  router.delete("/destroy", async (req: Request, res: Response, next: NextFunction) => {
-    if (res.locals.error) {
-      return next(new Error(`${res.locals.error}`));
-    }
-    const userId: string = res.locals.user.id;
-    try {
-      await models.User.deleteOne({ _id: userId });
-    } catch (e) {
-      return next(e);
-    }
+  public store(req: Request, res: Response, next: NextFunction): Promise<void | Response> | void {
+    return undefined;
+  }
 
-    return res.json(new Reply(200, "success", false, {}))
-  });
-
-  return router
-};
-export default user
+  /**
+   * Update a user.
+   * @param {e.Request} req
+   * @param {e.Response} res
+   * @param {e.NextFunction} next
+   * @returns {Promise<void | e.Response> | void}
+   */
+  public update(req: Request, res: Response, next: NextFunction): Promise<void | Response> | void {
+    return undefined;
+  }
+}

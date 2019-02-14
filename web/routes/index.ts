@@ -1,8 +1,8 @@
 import { Express } from "express";
 
-import auth from "./api/auth";
-import user from "./api/user";
-import home from "./home";
+import { AuthRouter } from "./api/auth";
+import { UserRouter } from "./api/user";
+import { HomeRouter } from "./home";
 
 /**
  * Add routes to app
@@ -10,9 +10,9 @@ import home from "./home";
  * @returns {e.Express}
  */
 const addRoutes = (app: Express) => {
-  app.use("/", home());
-  app.use("/api/auth", auth());
-  app.use("/api/user", user());
+  app.use("/", new HomeRouter().getRouter());
+  app.use("/api/auth", new AuthRouter().getRouter());
+  app.use("/api/user", new UserRouter().getRouter());
   return app
 };
 

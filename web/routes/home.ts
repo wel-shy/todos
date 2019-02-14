@@ -1,18 +1,14 @@
-import * as express from "express";
 import {NextFunction, Request, Response} from "express";
-let router;
+import {Methods} from "../methods";
+import {BaseRouter} from "./base";
 
-/**
- * Set the home route
- * @returns {e.Router}
- */
-function home(): express.Router {
-  router = express.Router();
-  router.get("/", (req: Request, res: Response, next: NextFunction) => {
+export class HomeRouter extends BaseRouter {
+  constructor() {
+    super();
+    this.addRoute("/", Methods.GET, this.home);
+  }
+
+  public home(req: Request, res: Response, next: NextFunction): Response {
     return res.send("Hello World");
-  });
-
-  return router
+  }
 }
-
-export default home

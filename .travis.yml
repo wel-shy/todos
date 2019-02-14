@@ -3,7 +3,7 @@ node_js:
  - "node"
 env:
   global:
-    - MONGO_URI=mongodb://127.0.0.1/stub
+    - MONGO_URI=mongodb://127.0.0.1/todo
     - SECRET=thisismyappsecret
     - DEBUG=true
     - TEST=true

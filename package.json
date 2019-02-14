@@ -5,7 +5,7 @@
   "main": "dist/app.js",
   "scripts": {
     "test": "nyc mocha dist/test/test.js --exit",
-    "build": "tsc"
+    "build": "npx tsc"
   },
   "repository": {
     "type": "git",
