@@ -1,41 +1,49 @@
-# express-stub
-> A template for a Typescript Express.js API.
-
-[![Build Status](https://travis-ci.com/danjwelsh/express-stub.svg?branch=master)](https://travis-ci.com/danjwelsh/express-stub)
-[![MIT license](https://img.shields.io/badge/License-MIT-blue.svg)](https://lbesson.mit-license.org/)
+# TODOS
+> TODO list web application
 
 
 ## Download
-Download the stub from GitHub.
+Run
 ```bash
-git clone https://github.com/danjwelsh/express-stub.git
-```
-
-## Setup as Blank Project
-Run the command below to remove the `.git` folder, and reinitialise as a new repository.
-```bash
-./setup.sh
+git clone https://github.com/wel-shy/todos.git
 ```
 
 ## Build
 Install typescript and compile to JavaScript:
 ```bash
-npm i -g typescript && tsc && cp .env.example .env
+npm install && npm run build && cp .env.example .env
 ```
 This will initialise the project with dummy environment variables, the project requires:
 ```
 DEBUG=false
 TEST=false
 SECRET=changetoasecret
-MONGO_URI=mongodb://mongo/stub
+MONGO_URI=mongodb://mongo/todo
 ```
 
 ## Run
+Run standalone with:
 ```bash
 npm run
 ```
+This will use the mongo uri you provided in `.env`, or run with docker using:
+```bash
+docker-compose up --build
+```
 
 ## Test
+Testing requires a mongodb instance to connect to. Either start one with:
 ```bash
-npm test
+docker run -p 2017:2017 mongo:latest
 ```
+then run:
+```bash
+npm run test
+```
+
+Or run:
+```bash
+docker-compose up --build -d && docker-compose exec web ash
+npm run test
+```
+`npm run test being run inside the docker container`.
