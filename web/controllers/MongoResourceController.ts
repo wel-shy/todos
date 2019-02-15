@@ -3,6 +3,9 @@ import {getModel} from "../Models";
 import IBaseMongoResource from "../schemas/BaseMongoResource";
 import {IResourceController} from "./IResourceController";
 
+/**
+ * MongoDB specific resource controller.
+ */
 export class MongoController<T extends IBaseMongoResource> implements IResourceController<T> {
   private table: string;
 

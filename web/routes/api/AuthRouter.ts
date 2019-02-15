@@ -12,6 +12,9 @@ import { BaseRouter } from "../BaseRouter";
 const userController: IResourceController<IUser> = ControllerFactory.getController("user");
 const authController: AuthController = new AuthController();
 
+/**
+ * Authentication router
+ */
 export class AuthRouter extends BaseRouter {
   /**
    * Add routes to the Auth Router.
@@ -23,25 +26,8 @@ export class AuthRouter extends BaseRouter {
   }
 
   /**
-   * @api {post} /api/authenticate Authenticate user.
-   * @apiGroup Auth
-   *
-   * @apiParam {String} username  User's username
-   * @apiParam {String} password  User's password
-   *
-   * @apiSuccessExample {json} Success-Response:
-   *  HTTP/1.1 200 OK
-   *  {
-   *     "code": 200,
-   *     "message": "success",
-   *     "errors": false,
-   *     "payload": {
-   *       "token": "token"
-   *     }
-   *  }
-   *
-   * @apiDescription Authenticate user against username and password.
-   * Return a JWT token.
+   * Handler for /register endpoint
+   * Takes users credentials and returns token
    *
    * @param {e.Request} req
    * @param {e.Response} res
@@ -54,6 +40,9 @@ export class AuthRouter extends BaseRouter {
     const username: string = req.body.username;
     const password: string = req.body.password;
 
+    /*
+     * Get the user
+     */
     let user: IUser;
     try {
       user = await authController.authenticateUser(username, password);
@@ -61,44 +50,21 @@ export class AuthRouter extends BaseRouter {
       return next(error);
     }
 
+    // return err if not found
+    if (!user) {
+      return next(new Error("404"));
+    }
+
+    // Generate a token
     const token = authController.generateToken(user);
 
+    // Construct and send reply.
     const response = new Reply(200, "success", false, { token });
     return res.json(response);
   }
 
   /**
-   * @api {post} /api/register Register a user.
-   * @apiGroup Auth
-   *
-   * @apiParam {String} username  User's username
-   * @apiParam {String} password  User's password
-   *
-   * @apiSuccessExample {json} Success-Response:
-   *  HTTP/1.1 200 OK
-   *  {
-   *     "code": 200,
-   *     "message": "success",
-   *     "errors": false,
-   *     "payload": {
-   *       "user": {
-   *         "devices": [],
-   *         "media": [],
-   *         "_id": "user_id",
-   *        "iv": "iv_string",
-   *        "username": "user",
-   *        "password": "hashed_password",
-   *        "createdAt": "2018-12-12T16:13:59.352Z",
-   *        "updatedAt": "2018-12-12T16:13:59.352Z",
-   *        "__v": 0
-   *      },
-   *      "token": "token"
-   *    }
-   * }
-   *
-   * @apiDescription Registers a user.
-   * Returns a JWT token.
-   *
+   * Register the user.
    * @param {e.Request} req
    * @param {e.Response} res
    * @param {e.NextFunction} next
@@ -111,10 +77,17 @@ export class AuthRouter extends BaseRouter {
 
     // abort if either username or password are null
     if (!username || !password) {
-      const e: Error = new Error("400");
-      return next(e);
+      return next(new Error("400"));
     }
 
+    /*
+     * Generate an IV for the user.
+     * Hash the user password against iv.
+     * Store the user.
+     *
+     * Throws 403 if user exists
+     * Throws 500 if insertion fails.
+     */
     let user: IUser;
     let e: Error;
     try {
@@ -131,7 +104,9 @@ export class AuthRouter extends BaseRouter {
       return next(e);
     }
 
+    // Return user and token.
     const token = authController.generateToken(user);
+    user.password = "";
 
     const response = new Reply(200, "success", false, { user, token });
     return res.json(response);

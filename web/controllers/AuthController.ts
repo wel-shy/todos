@@ -6,7 +6,16 @@ import {IResourceController} from "./IResourceController";
 
 const userController: IResourceController<IUser> = ControllerFactory.getController("user");
 
+/**
+ * Manage authentication
+ */
 export class AuthController {
+  /**
+   * Authenticate and return user against their credentials
+   * @param {string} username
+   * @param {string} password
+   * @returns {Promise<IUser>}
+   */
   public async authenticateUser(username: string, password: string): Promise<IUser> {
     let user: IUser;
     try {
@@ -29,6 +38,11 @@ export class AuthController {
     return user;
   }
 
+  /**
+   * Generate a token from a user record.
+   * @param {IUser} user
+   * @returns {string}
+   */
   public generateToken(user: IUser): string {
     const payload = {
       id: user._id,

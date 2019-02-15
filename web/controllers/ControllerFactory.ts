@@ -4,8 +4,16 @@ import {IUser} from "../schemas/User";
 import {IResourceController} from "./IResourceController";
 import {MongoController} from "./MongoResourceController";
 
+/**
+ * Generate a controller for the type of database
+ */
 export default class ControllerFactory {
 
+  /**
+   * Determine database type and return fitting controller.
+   * @param {string} resName
+   * @returns {IResourceController<IBaseMongoResource | any>}
+   */
   public static getController(resName: string): IResourceController<IBaseMongoResource | any> {
     switch (process.env.DB_TYPE) {
       case "MONGO":
@@ -15,6 +23,11 @@ export default class ControllerFactory {
     }
   }
 
+  /**
+   * Determine table and return controller for that table.
+   * @param {string} res
+   * @returns {MongoController<IBaseMongoResource>}
+   */
   private static getMongoController(res: string): MongoController<IBaseMongoResource> {
     let cont: MongoController<IBaseMongoResource>;
 

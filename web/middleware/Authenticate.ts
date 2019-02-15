@@ -2,6 +2,12 @@ import * as express from "express";
 import * as jwt from "jsonwebtoken";
 import { IUser } from "../schemas/User";
 
+/**
+ * Verfiy a user's JWT token
+ * @param {e.Request} req
+ * @param {e.Response} res
+ * @param {e.NextFunction} next
+ */
 export function checkToken(req: express.Request,
                            res: express.Response,
                            next: express.NextFunction) {
