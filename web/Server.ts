@@ -26,7 +26,6 @@ export class App {
     mongoose.connect(process.env.MONGO_URI);
 
     this.prepareStatic();
-    this.setViewEngine();
     this.setBodyParser();
     this.addCors();
     this.setAppSecret();
@@ -39,14 +38,6 @@ export class App {
    */
   private prepareStatic(): void {
     this.express.use(express.static(path.join(__dirname, "/../static/")));
-  }
-
-  /**
-   * Set view engine to ejs
-   */
-  private setViewEngine(): void {
-    this.express.set("view engine", "ejs");
-    this.express.engine("html", require("ejs").renderFile);
   }
 
   /**

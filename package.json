@@ -1,15 +1,15 @@
 {
-  "name": "express-stub",
+  "name": "todos",
   "version": "0.0.1",
-  "description": "Stub for an Express.js API",
+  "description": "Todo list api",
   "main": "dist/app.js",
   "scripts": {
-    "test": "nyc mocha dist/test/test.js --exit",
+    "test": "nyc mocha dist/test/Test.js --exit",
     "build": "npx tsc"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danjwelsh/express-stub.git"
+    "url": "git+https://github.com/wel-shy/todos.git"
   },
   "keywords": [
     "api",
@@ -19,20 +19,18 @@
   "author": "Daniel Welsh",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danjwelsh/express-stub/issues"
+    "url": "https://github.com/wel-shy/todos/issues"
   },
-  "homepage": "https://github.com/danjwelsh/express-stub#readme",
+  "homepage": "https://github.com/wel-shy/todos/#readme",
   "dependencies": {
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
     "dotenv": "^5.0.1",
-    "ejs": "^2.6.1",
     "express": "^4.16.4",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.4.12",
-    "nodemon": "^1.18.10",
-    "require-directory": "^2.1.1"
+    "nodemon": "^1.18.10"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
