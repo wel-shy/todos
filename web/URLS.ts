@@ -1,3 +1,3 @@
-export enum Urls {
+export enum URLS {
   TEST = "http://localhost:8888/api",
 }

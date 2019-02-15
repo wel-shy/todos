@@ -1,5 +1,5 @@
 import * as express from "express";
-import { Reply } from "../reply";
+import { Reply } from "../Reply";
 
 /**
  * Handle an error and give an appropriate response
@@ -15,7 +15,7 @@ const handleResponse: express.ErrorRequestHandler = (
   res: express.Response,
   next: express.NextFunction,
 ) => {
-  const code: number = parseInt(err.message);
+  const code: number = parseInt(err.message, 10);
   // Get error message from code
   const reply: Reply = getError(code);
 

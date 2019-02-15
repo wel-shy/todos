@@ -6,7 +6,7 @@ services:
       - 3000:3000
       volumes:
       - "./web:/app/web"
-      - "./app.ts:/app/app.ts"
+      - "./App.ts:/app/App.ts"
       - "./.env:/app/.env"
       - "./dist:/app/dist"
       - "./test:/app/test"

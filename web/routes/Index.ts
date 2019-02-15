@@ -1,8 +1,8 @@
 import { Express } from "express";
 
-import { AuthRouter } from "./api/auth";
-import { UserRouter } from "./api/user";
-import { HomeRouter } from "./home";
+import { AuthRouter } from "./api/AuthRouter";
+import { UserRouter } from "./api/UserRouter";
+import { HomeRouter } from "./HomeRouter";
 
 /**
  * Add routes to app

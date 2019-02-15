@@ -1,4 +1,5 @@
-import { Document, Schema } from "mongoose";
+import { Schema } from "mongoose";
+import IBaseMongoResource from "./BaseMongoResource";
 
 const schemaOptions = {
   timestamps: true,
@@ -7,12 +8,14 @@ const schemaOptions = {
 /**
  * User interface extending the Mongoose.Document
  */
-export interface IUser extends Document {
+export interface IUser extends IBaseMongoResource {
   username: string;
   password: string;
   iv: string;
   createdAt: string;
   updatedAt: string;
+
+  getTableName(): string;
 }
 
 /**
@@ -35,3 +38,9 @@ export const UserSchema = new Schema({
     unique: true,
   },
 }, schemaOptions);
+
+UserSchema.methods.getTableName = getTableName();
+
+function getTableName(): string {
+  return "user";
+}

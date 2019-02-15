@@ -1,4 +1,5 @@
-import { Document, Schema } from "mongoose";
+import { Schema } from "mongoose";
+import IBaseMongoResource from "./BaseMongoResource";
 
 const schemaOptions = {
   timestamps: true,
@@ -7,12 +8,14 @@ const schemaOptions = {
 /**
  * User interface extending the Mongoose.Document
  */
-export interface ITodo extends Document {
+export interface ITodo extends IBaseMongoResource {
   task: string;
   done: boolean;
   userId: Schema.Types.ObjectId,
   createdAt: string;
   updatedAt: string;
+
+  getTableName(): string;
 }
 
 /**
@@ -34,3 +37,9 @@ export const TodoSchema = new Schema({
     type: Schema.Types.ObjectId,
   },
 }, schemaOptions);
+
+TodoSchema.methods.getTableName = getTableName();
+
+function getTableName(): string {
+  return "todo";
+}

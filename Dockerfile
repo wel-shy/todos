@@ -19,7 +19,7 @@ RUN npm install
 
 
 COPY .env /app/.env
-COPY app.ts /app/app.ts
+COPY App.ts /app/App.ts
 COPY tsconfig.json /app/tsconfig.json
 COPY web /app/web
 COPY test /app/test
@@ -35,4 +35,4 @@ EXPOSE 80
 
 
 # Start the server.
-CMD npx nodemon dist/app.js
+CMD npx nodemon dist/App.js

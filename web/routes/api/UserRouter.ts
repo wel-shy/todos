@@ -1,10 +1,10 @@
-import models from "../../models";
-import { Reply } from "../../reply";
-import {IUser} from "../../schemas/user";
+import models from "../../Models";
+import { Reply } from "../../Reply";
+import {IUser} from "../../schemas/User";
 
 import { NextFunction, Request, Response } from "express";
-import {checkToken} from "../../middleware/authenticate";
-import {ResourceRouter} from "../resource";
+import {checkToken} from "../../middleware/Authenticate";
+import {ResourceRouter} from "../ResourceRouter";
 
 export class UserRouter extends ResourceRouter {
   constructor() {

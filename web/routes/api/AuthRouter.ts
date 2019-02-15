@@ -1,12 +1,15 @@
 import { NextFunction, Request, Response } from "express";
-import { AuthController } from "../../controllers/auth";
-import { UserController } from "../../controllers/user";
-import { Methods } from "../../methods";
-import { Reply } from "../../reply";
-import { IUser } from "../../schemas/user";
-import { BaseRouter } from "../base";
+import {MongoError} from "mongodb";
+import { AuthController } from "../../controllers/AuthController";
+import ControllerFactory from "../../controllers/ControllerFactory";
+import {IResourceController} from "../../controllers/IResourceController";
+import CryptoHelper from "../../CryptoHelper";
+import { HTTPMethods } from "../../HTTPMethods";
+import { Reply } from "../../Reply";
+import { IUser } from "../../schemas/User";
+import { BaseRouter } from "../BaseRouter";
 
-const userController: UserController = new UserController();
+const userController: IResourceController<IUser> = ControllerFactory.getController("user");
 const authController: AuthController = new AuthController();
 
 export class AuthRouter extends BaseRouter {
@@ -15,8 +18,8 @@ export class AuthRouter extends BaseRouter {
    */
   constructor() {
     super();
-    this.addRoute("/authenticate", Methods.POST, this.authenticateUser);
-    this.addRoute("/register", Methods.POST, this.registerUser);
+    this.addRoute("/authenticate", HTTPMethods.POST, this.authenticateUser);
+    this.addRoute("/register", HTTPMethods.POST, this.registerUser);
   }
 
   /**
@@ -104,7 +107,7 @@ export class AuthRouter extends BaseRouter {
   public async registerUser(req: Request, res: Response, next: NextFunction): Promise<Response | void> {
     // Get username and password
     const username: string = req.body.username;
-    const password: string = req.body.password;
+    let password: string = req.body.password;
 
     // abort if either username or password are null
     if (!username || !password) {
@@ -113,11 +116,19 @@ export class AuthRouter extends BaseRouter {
     }
 
     let user: IUser;
+    let e: Error;
     try {
-      user = await userController.store({ username, password });
+      const iv: string = CryptoHelper.getRandomString(16);
+      password = CryptoHelper.hashString(password, iv);
+      user = await userController.store({ iv, username, password });
     } catch (error) {
-      console.log(error);
-      return next(error);
+      if ((error as MongoError).errmsg.indexOf("duplicate key error collection")) {
+        e = new Error("403");
+      } else {
+        e = new Error("500");
+      }
+
+      return next(e);
     }
 
     const token = authController.generateToken(user);

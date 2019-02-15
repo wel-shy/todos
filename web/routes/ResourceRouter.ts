@@ -1,5 +1,5 @@
 import {NextFunction, Request, Response} from "express";
-import {BaseRouter} from "./base";
+import {BaseRouter} from "./BaseRouter";
 
 /**
  * A router that handles a resource.

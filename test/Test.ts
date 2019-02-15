@@ -1,6 +1,6 @@
 import {Server} from "http";
 import {describe} from "mocha";
-import {App} from "../web/server";
+import {App} from "../web/Server";
 
 let server: Server;
 
@@ -21,9 +21,9 @@ describe("App", () => {
     await server.close()
   });
 
-  require("./modules/user");
-  require("./modules/home");
-  require("./modules/auth");
-  require("./modules/middleware");
-  require("./modules/todo");
+  require("./modules/User");
+  require("./modules/Home");
+  require("./modules/Auth");
+  require("./modules/Middleware");
+  require("./modules/Todo");
 });

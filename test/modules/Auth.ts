@@ -1,14 +1,16 @@
 import Axios, {AxiosError, AxiosResponse} from "axios";
 import {expect} from "chai";
 import {describe} from "mocha";
-import {Urls} from "../../web/urls";
-import {UserController} from "../../web/controllers/user";
-import {IUser} from "../../web/schemas/user";
+import ControllerFactory from "../../web/controllers/ControllerFactory";
+import {IResourceController} from "../../web/controllers/IResourceController";
+import CryptoHelper from "../../web/CryptoHelper";
+import {IUser} from "../../web/schemas/User";
+import {URLS} from "../../web/URLS";
 
 describe("Auth", () => {
   let user: IUser;
   let token: string;
-  const userController: UserController = new UserController();
+  const userController: IResourceController<IUser> = ControllerFactory.getController("user");
 
   after(async () => {
     await userController.destroy(user._id);
@@ -21,7 +23,7 @@ describe("Auth", () => {
         username: "tester",
       };
 
-      Axios.post(`${Urls.TEST}/auth/register`, userData)
+      Axios.post(`${URLS.TEST}/auth/register`, userData)
         .then((response: AxiosResponse) => {
           expect(response.data.payload.token).to.have.length.above(10);
 
@@ -35,10 +37,11 @@ describe("Auth", () => {
   describe("Rejects creating existing account", () => {
     it("Should prevent the user from creating an account with an existing username", (done) => {
       const userData = {
+        iv: CryptoHelper.getRandomString(16),
         password: "secret",
         username: "tester",
       };
-      Axios.post(`${Urls.TEST}/auth/register`, userData)
+      Axios.post(`${URLS.TEST}/auth/register`, userData)
         .then()
         .catch((error: AxiosError) => {
           expect(error.response.status).to.equal(403);
@@ -53,7 +56,7 @@ describe("Auth", () => {
         password: "secret",
         username: "tester",
       };
-      Axios.post(`${Urls.TEST}/auth/authenticate`, userData).then((response: AxiosResponse) => {
+      Axios.post(`${URLS.TEST}/auth/authenticate`, userData).then((response: AxiosResponse) => {
         expect(response.data.payload.token).to.have.length.above(10);
         token = response.data.payload.token;
         done()
@@ -67,7 +70,7 @@ describe("Auth", () => {
         password: "password",
         username: "tester",
       };
-      Axios.post(`${Urls.TEST}/auth/authenticate`, userData)
+      Axios.post(`${URLS.TEST}/auth/authenticate`, userData)
         .then()
         .catch((error: AxiosError) => {
           expect(error.response.status).to.equal(401);
@@ -82,7 +85,7 @@ describe("Auth", () => {
         password: "secret",
         username: "tester1",
       };
-      Axios.post(`${Urls.TEST}/auth/authenticate`, userData)
+      Axios.post(`${URLS.TEST}/auth/authenticate`, userData)
         .then()
         .catch((error: AxiosError) => {
           expect(error.response.status).to.equal(401);

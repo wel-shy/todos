@@ -1,20 +1,23 @@
 import Axios, {AxiosResponse} from "axios";
 import {expect} from "chai";
 import {describe} from "mocha";
-import {AuthController} from "../../web/controllers/auth";
-import {UserController} from "../../web/controllers/user";
-import {IUser} from "../../web/schemas/user";
-import {Urls} from "../../web/urls";
+import {AuthController} from "../../web/controllers/AuthController";
+import ControllerFactory from "../../web/controllers/ControllerFactory";
+import {IResourceController} from "../../web/controllers/IResourceController";
+import CryptoHelper from "../../web/CryptoHelper";
+import {IUser} from "../../web/schemas/User";
+import {URLS} from "../../web/URLS";
 
 describe("User", () => {
-  const userController: UserController = new UserController();
+  const userController: IResourceController<IUser> = ControllerFactory.getController("user");
 
   describe("Controller", () => {
     let user: IUser;
 
     describe("Store", () => {
-      it("Should store a user's profile",(done) => {
+      it("Should store a user's profile", (done) => {
         const userData = {
+          iv: CryptoHelper.getRandomString(16),
           password: "secret",
           username: "test-user",
         };
@@ -29,7 +32,7 @@ describe("User", () => {
     });
 
     describe("Should get user", () => {
-      it("Should fetch a user's profile",(done) => {
+      it("Should fetch a user's profile", (done) => {
         userController.get(user._id)
           .then((stored) => {
             expect(stored.username.length).to.be.greaterThan(0);
@@ -40,7 +43,7 @@ describe("User", () => {
     });
 
     describe("Destroy", () => {
-      it("Should destroy the user",(done) => {
+      it("Should destroy the user", (done) => {
         userController.destroy(user._id)
           .then(() => {
             userController.get(user._id)
@@ -57,9 +60,11 @@ describe("User", () => {
     const authController: AuthController = new AuthController();
     let user: IUser;
     let token: string;
+    const iv: string = CryptoHelper.getRandomString(16);
 
     before(async () => {
       user = await userController.store({
+        iv,
         password: "secret",
         username: "tester-user",
       });
@@ -73,7 +78,7 @@ describe("User", () => {
 
     describe("Profile", () => {
       it("Should return the users information", (done) => {
-        Axios.get(`${Urls.TEST}/user/me`, {headers: {"x-access-token": token}})
+        Axios.get(`${URLS.TEST}/user/me`, {headers: {"x-access-token": token}})
           .then((response: AxiosResponse) => {
             expect(response.data.payload.user.username).to.equal(user.username);
             done()
@@ -83,7 +88,7 @@ describe("User", () => {
 
     describe("Destroy", () => {
       it("Should delete users profile", (done) => {
-        Axios.delete(`${Urls.TEST}/user/destroy`, {headers: {"x-access-token": token}})
+        Axios.delete(`${URLS.TEST}/user/destroy`, {headers: {"x-access-token": token}})
           .then((response: AxiosResponse) => {
             expect(response.status).to.equal(200);
             done()

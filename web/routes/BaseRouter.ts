@@ -1,5 +1,5 @@
 import { Handler, Router } from "express";
-import { Methods } from "../methods";
+import { HTTPMethods } from "../HTTPMethods";
 
 /**
  * @apiDefine isAuthenticated
@@ -20,24 +20,24 @@ export abstract class BaseRouter {
   /**
    * Add a route to the router.
    * @param {string} path
-   * @param {Methods} method
+   * @param {HTTPMethods} method
    * @param handler
    */
   public addRoute(
     path: string,
-    method: Methods,
+    method: HTTPMethods,
     handler: Handler) {
     switch (method) {
-      case Methods.GET:
+      case HTTPMethods.GET:
         this.router.get(path, handler);
         break;
-      case Methods.POST:
+      case HTTPMethods.POST:
         this.router.post(path, handler);
         break;
-      case Methods.PUT:
+      case HTTPMethods.PUT:
         this.router.put(path, handler);
         break;
-      case Methods.DELETE:
+      case HTTPMethods.DELETE:
         this.router.delete(path, handler);
     }
   }

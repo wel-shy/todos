@@ -4,8 +4,8 @@ import * as dotenv from "dotenv";
 import * as express from "express";
 import * as mongoose from "mongoose";
 import * as path from "path";
-import * as handler from "./middleware/handler";
-import addRoutes from "./routes";
+import * as handler from "./middleware/ErrorHandler";
+import addRoutes from "./routes/Index";
 
 // Load environment variables
 dotenv.load();
