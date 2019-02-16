@@ -16,19 +16,21 @@ export default async function checkAdmin(req: Request,
 
   const userController: IResourceController<IUser> = ControllerFactory.getController("user");
   let user: IUser;
+  if (res.locals.error) {
+    if (!(res.locals.error === 403)) return next();
+  }
 
-  if (res.locals.error) return next();
 
   try {
     user = await userController.get(res.locals.user.id);
   } catch (e) {
     res.locals.customErrorMessage = e.message;
     res.locals.error = 500;
-    next();
+    return next();
   }
 
   if (user.role === UserRoles.ADMIN) {
-    res.locals.admin = true;
+    res.locals.admin = UserRoles.ADMIN;
   }
 
   return next();

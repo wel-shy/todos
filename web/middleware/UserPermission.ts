@@ -14,12 +14,12 @@ import {IResourceController} from "../controllers/IResourceController";
 export default async function checkPermission(req: Request,
                            res: Response,
                            next: NextFunction) {
-
-  const id: string =
+  let id: string =
     req.body.id ||
     req.query.id ||
     req.headers["id"] ||
-    req.params.id;
+    req.params.id ||
+    req.params["id"];
 
   if (id === undefined || null || "") {
     return next();
