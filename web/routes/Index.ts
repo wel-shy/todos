@@ -1,6 +1,5 @@
 import {Express} from "express";
 import {AuthRouter} from "./api/AuthRouter";
-import {UserRouter} from "./api/UserRouter";
 import {HomeRouter} from "./HomeRouter";
 import ResourceRouterFactory from "./ResourceRouterFactory";
 import RouterSchema from "./RouterSchema";
@@ -13,7 +12,6 @@ import RouterSchema from "./RouterSchema";
 const addRoutes = (app: Express) => {
   app.use("/", new HomeRouter().getRouter());
   app.use("/api/auth", new AuthRouter().getRouter());
-  app.use("/api/user", new UserRouter().getRouter());
 
   routes.forEach((schema: RouterSchema) => {
     app.use(schema.route, ResourceRouterFactory.getResourceRouter(schema.table, schema.options).getRouter());

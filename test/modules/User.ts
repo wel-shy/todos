@@ -71,15 +71,15 @@ describe("User", () => {
     });
 
     it("Should return the users information", (done) => {
-      Axios.get(`${URLS.TEST}/user/me`, {headers: {"x-access-token": token}})
+      Axios.get(`${URLS.TEST}/user/${user._id}`, {headers: {"x-access-token": token}})
         .then((response: AxiosResponse) => {
-          expect(response.data.payload.user.username).to.equal(user.username);
+          expect(response.data.payload.username).to.equal(user.username);
           done()
         });
     });
 
     it("Should delete users profile", (done) => {
-      Axios.delete(`${URLS.TEST}/user/destroy`, {headers: {"x-access-token": token}})
+      Axios.delete(`${URLS.TEST}/user/${user._id}`, {headers: {"x-access-token": token}})
         .then((response: AxiosResponse) => {
           expect(response.status).to.equal(200);
           done()
