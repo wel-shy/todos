@@ -1,6 +1,6 @@
 import {Schema} from "mongoose";
 import {getModel} from "../Models";
-import IBaseMongoResource from "../schemas/BaseMongoResource";
+import IBaseMongoResource from "../schemas/IBaseMongoResource";
 import {IResourceController} from "./IResourceController";
 
 /**

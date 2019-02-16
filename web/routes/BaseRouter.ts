@@ -1,4 +1,4 @@
-import { Handler, Router } from "express";
+import { Handler, Router, Response } from "express";
 import { HTTPMethods } from "../HTTPMethods";
 
 /**
@@ -10,11 +10,10 @@ import { HTTPMethods } from "../HTTPMethods";
  * Base router class. All routers extend this class.
  */
 export abstract class BaseRouter {
-  public router: Router;
-  public fileUploadHandler: Handler;
+  private router: Router;
 
   protected constructor() {
-    this.router = Router();
+    this.setRouter(Router());
   }
 
   /**
@@ -50,11 +49,22 @@ export abstract class BaseRouter {
     return this.router;
   }
 
+  public setRouter(router: Router) {
+    this.router = router;
+  }
+
   /**
    * Add middleware to the router.
    * @param middleware
    */
   public addMiddleware(middleware: Handler): void {
     this.router.use(middleware);
+  }
+
+  public static errorCheck(res: Response): Error {
+    if (res.locals.error) {
+      return new Error(`${res.locals.error}`);
+    }
+    return null;
   }
 }

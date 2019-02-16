@@ -1,5 +1,6 @@
-import { Schema } from "mongoose";
-import IBaseMongoResource from "./BaseMongoResource";
+import {Schema} from "mongoose";
+import {UserRoles} from "../UserRoles";
+import IBaseMongoResource from "./IBaseMongoResource";
 
 const schemaOptions = {
   timestamps: true,
@@ -12,6 +13,7 @@ export interface IUser extends IBaseMongoResource {
   username: string;
   password: string;
   iv: string;
+  role: UserRoles;
   createdAt: string;
   updatedAt: string;
 
@@ -29,6 +31,14 @@ export const UserSchema = new Schema({
   },
   password: {
     required: true,
+    type: String,
+  },
+  role: {
+    default: UserRoles.USER,
+    enum: [
+      UserRoles.ADMIN,
+      UserRoles.USER,
+    ],
     type: String,
   },
   username: {

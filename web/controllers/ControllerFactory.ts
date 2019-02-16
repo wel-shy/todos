@@ -1,4 +1,4 @@
-import IBaseMongoResource from "../schemas/BaseMongoResource";
+import IBaseMongoResource from "../schemas/IBaseMongoResource";
 import {ITodo} from "../schemas/Todo";
 import {IUser} from "../schemas/User";
 import {IResourceController} from "./IResourceController";

@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import IBaseMongoResource from "./BaseMongoResource";
+import IBaseMongoResource from "./IBaseMongoResource";
 
 const schemaOptions = {
   timestamps: true,
@@ -16,6 +16,7 @@ export interface ITodo extends IBaseMongoResource {
   updatedAt: string;
 
   getTableName(): string;
+  getUserId(): Schema.Types.ObjectId;
 }
 
 /**
@@ -39,6 +40,9 @@ export const TodoSchema = new Schema({
 }, schemaOptions);
 
 TodoSchema.methods.getTableName = getTableName();
+TodoSchema.methods.getUserId = function(): Schema.Types.ObjectId {
+  return this.userId;
+};
 
 function getTableName(): string {
   return "todo";

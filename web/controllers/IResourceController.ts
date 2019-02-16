@@ -1,5 +1,5 @@
 import { Schema } from "mongoose";
-import IBaseMongoResource from "../schemas/BaseMongoResource";
+import IBaseMongoResource from "../schemas/IBaseMongoResource";
 
 /**
  * Interface for resource controllers.

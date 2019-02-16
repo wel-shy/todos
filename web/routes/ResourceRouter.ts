@@ -1,5 +1,6 @@
 import {NextFunction, Request, Response} from "express";
 import {BaseRouter} from "./BaseRouter";
+import {HTTPMethods} from "../HTTPMethods";
 
 /**
  * A router that handles a resource.
@@ -65,15 +66,10 @@ export abstract class ResourceRouter extends BaseRouter {
    * Add all default routes to router.
    */
   public addDefaultRoutes(): void {
-    this.router.get("/:id", this.show);
-    this.router.delete("/:id", this.destroy);
-    this.router.post("/update", this.update);
-    this.router.get("/", this.index);
-
-    if (this.fileUploadHandler) {
-      this.router.post("/", this.fileUploadHandler, this.store);
-    } else {
-      this.router.post("/", this.store);
-    }
+    this.addRoute("/:id", HTTPMethods.GET, this.show);
+    this.addRoute("/:id", HTTPMethods.DELETE, this.destroy);
+    this.addRoute("/update", HTTPMethods.POST, this.update);
+    this.addRoute("/", HTTPMethods.POST, this.store);
+    this.addRoute("/", HTTPMethods.GET, this.index);
   }
 }

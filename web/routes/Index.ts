@@ -1,8 +1,9 @@
-import { Express } from "express";
-
-import { AuthRouter } from "./api/AuthRouter";
-import { UserRouter } from "./api/UserRouter";
-import { HomeRouter } from "./HomeRouter";
+import {Express} from "express";
+import {AuthRouter} from "./api/AuthRouter";
+import {UserRouter} from "./api/UserRouter";
+import {HomeRouter} from "./HomeRouter";
+import ResourceRouterFactory from "./ResourceRouterFactory";
+import RouterSchema from "./RouterSchema";
 
 /**
  * Add routes to app
@@ -13,7 +14,31 @@ const addRoutes = (app: Express) => {
   app.use("/", new HomeRouter().getRouter());
   app.use("/api/auth", new AuthRouter().getRouter());
   app.use("/api/user", new UserRouter().getRouter());
+
+  routes.forEach((schema: RouterSchema) => {
+    app.use(schema.route, ResourceRouterFactory.getResourceRouter(schema.table, schema.options).getRouter());
+  });
+
   return app
 };
 
 export default addRoutes;
+
+export const routes: RouterSchema[] = [
+  new RouterSchema({
+      isOwned: true,
+      isProtected: true,
+    },
+    "/api/todo",
+    "todo"),
+  new RouterSchema({
+      isOwned: false,
+      isProtected: true,
+    },
+    "/api/user",
+    "user"),
+];
+
+export function getSchema(route: string): RouterSchema {
+  return routes.find((schema: RouterSchema) => route.indexOf(schema.route) > -1);
+}
