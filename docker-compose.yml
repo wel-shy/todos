@@ -7,7 +7,6 @@ services:
       volumes:
       - "./web:/app/web"
       - "./App.ts:/app/App.ts"
-      - "./.env:/app/.env"
       - "./dist:/app/dist"
       - "./test:/app/test"
       depends_on:
@@ -15,7 +14,10 @@ services:
       links:
         - mongo
       environment:
-         MONGO_URI: mongodb://mongo/todo
+         MONGO_URI: "mongodb://mongo/todo"
+         SECRET: "changethistosomethingmoresecret"
+         DEBUG: "true"
+         DB_TYPE: "MONGO"
   mongo:
     image: mongo
     ports:

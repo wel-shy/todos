@@ -18,7 +18,6 @@ COPY ./package.json /app/package.json
 RUN npm install
 
 
-COPY .env /app/.env
 COPY App.ts /app/App.ts
 COPY tsconfig.json /app/tsconfig.json
 COPY web /app/web
@@ -27,7 +26,6 @@ COPY test /app/test
 
 RUN npm run build
 RUN npx tsc
-RUN ls -la /dist
 
 
 # Expose port 80
