@@ -14,45 +14,39 @@ describe("User", () => {
   describe("Controller", () => {
     let user: IUser;
 
-    describe("Store", () => {
-      it("Should store a user's profile", (done) => {
-        const userData = {
-          iv: CryptoHelper.getRandomString(16),
-          password: "secret",
-          username: "test-user",
-        };
+    it("Should store a user's profile", (done) => {
+      const userData = {
+        iv: CryptoHelper.getRandomString(16),
+        password: "secret",
+        username: "test-user",
+      };
 
-        userController.store(userData)
-          .then((storedUser) => {
-            expect(storedUser.username).to.equal(userData.username);
-            user = storedUser;
-            done();
-          });
-      })
+      userController.store(userData)
+        .then((storedUser) => {
+          expect(storedUser.username).to.equal(userData.username);
+          user = storedUser;
+          done();
+        });
     });
 
-    describe("Should get user", () => {
-      it("Should fetch a user's profile", (done) => {
-        userController.get(user._id)
-          .then((stored) => {
-            expect(stored.username.length).to.be.greaterThan(0);
-            expect(stored.password.length).to.be.greaterThan(0);
-            done();
-          });
-      })
+    it("Should fetch a user's profile", (done) => {
+      userController.get(user._id)
+        .then((stored) => {
+          expect(stored.username.length).to.be.greaterThan(0);
+          expect(stored.password.length).to.be.greaterThan(0);
+          done();
+        });
     });
 
-    describe("Destroy", () => {
-      it("Should destroy the user", (done) => {
-        userController.destroy(user._id)
-          .then(() => {
-            userController.get(user._id)
-              .then((storedUser) => {
-                expect(storedUser).to.equal(null);
-                done();
-              })
-          });
-      });
+    it("Should destroy the user", (done) => {
+      userController.destroy(user._id)
+        .then(() => {
+          userController.get(user._id)
+            .then((storedUser) => {
+              expect(storedUser).to.equal(null);
+              done();
+            })
+        });
     });
   });
 
@@ -76,24 +70,20 @@ describe("User", () => {
       userController.destroy(user._id);
     });
 
-    describe("Profile", () => {
-      it("Should return the users information", (done) => {
-        Axios.get(`${URLS.TEST}/user/me`, {headers: {"x-access-token": token}})
-          .then((response: AxiosResponse) => {
-            expect(response.data.payload.user.username).to.equal(user.username);
-            done()
-          })
-      })
+    it("Should return the users information", (done) => {
+      Axios.get(`${URLS.TEST}/user/me`, {headers: {"x-access-token": token}})
+        .then((response: AxiosResponse) => {
+          expect(response.data.payload.user.username).to.equal(user.username);
+          done()
+        });
     });
 
-    describe("Destroy", () => {
-      it("Should delete users profile", (done) => {
-        Axios.delete(`${URLS.TEST}/user/destroy`, {headers: {"x-access-token": token}})
-          .then((response: AxiosResponse) => {
-            expect(response.status).to.equal(200);
-            done()
-          })
-      })
-    })
+    it("Should delete users profile", (done) => {
+      Axios.delete(`${URLS.TEST}/user/destroy`, {headers: {"x-access-token": token}})
+        .then((response: AxiosResponse) => {
+          expect(response.status).to.equal(200);
+          done()
+        });
+    });
   });
 });

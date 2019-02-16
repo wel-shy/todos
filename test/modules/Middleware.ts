@@ -28,27 +28,23 @@ describe("Middleware", () => {
     userController.destroy(user._id);
   });
 
-  describe("Authentication", () => {
-    describe("Require token", () => {
-      it("Should reject request if no token is given", (done) => {
-        Axios.get(`${URLS.TEST}/user/me`).then()
-          .catch((error) => {
-            expect(error.response.status).to.equal(401);
-            done()
-          })
-      })
+  describe("Require token", () => {
+    it("Should reject request if no token is given", (done) => {
+      Axios.get(`${URLS.TEST}/user/me`).then()
+        .catch((error) => {
+          expect(error.response.status).to.equal(401);
+          done()
+        });
     });
 
-    describe("Check token is valid", () => {
-      it("Should reject request if the token is invalid", (done) => {
-        const invToken = `${token}0`;
-        Axios.get(`${URLS.TEST}/user/me`, {headers: {"x-access-token": invToken}})
-          .then()
-          .catch((error: AxiosError) => {
-            expect(error.response.status).to.equal(401);
-            done()
-          })
-      })
-    })
-  })
+    it("Should reject request if the token is invalid", (done) => {
+      const invToken = `${token}0`;
+      Axios.get(`${URLS.TEST}/user/me`, {headers: {"x-access-token": invToken}})
+        .then()
+        .catch((error: AxiosError) => {
+          expect(error.response.status).to.equal(401);
+          done()
+        });
+    });
+  });
 });
