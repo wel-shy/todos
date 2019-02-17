@@ -183,9 +183,10 @@ describe("todo", () => {
 
     it("Should update a todo item", (done) => {
       const todoData = {
+        archived: true,
         done: true,
-        task: "test todos",
         id: todo._id,
+        task: "test todos",
       };
 
       axios.post(`${URLS.TEST}/todo/update`, todoData, {
@@ -196,6 +197,7 @@ describe("todo", () => {
         .then((response: AxiosResponse) => {
           expect(response.data.payload.task).to.equal(todoData.task);
           expect(response.data.payload.done).to.equal(todoData.done);
+          expect(response.data.payload.archived).to.equal(todoData.archived);
           todo = response.data.payload;
           done();
         })
@@ -208,8 +210,8 @@ describe("todo", () => {
         },
       })
         .then(() => {
-          todoController.get(todo._id).then((todo: ITodo) => {
-            expect(todo).to.equal(null);
+          todoController.get(todo._id).then((t: ITodo) => {
+            expect(t).to.equal(null);
             done();
           });
         })

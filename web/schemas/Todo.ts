@@ -11,6 +11,7 @@ const schemaOptions = {
 export interface ITodo extends IBaseMongoResource {
   task: string;
   done: boolean;
+  archived: boolean;
   userId: Schema.Types.ObjectId,
   createdAt: string;
   updatedAt: string;
@@ -24,7 +25,13 @@ export interface ITodo extends IBaseMongoResource {
  * @type {module:mongoose.Schema}
  */
 export const TodoSchema = new Schema({
+  archived: {
+    default: false,
+    required: true,
+    type: Boolean,
+  },
   done: {
+    default: false,
     required: true,
     type: Boolean,
   },
