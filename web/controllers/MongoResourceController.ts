@@ -84,6 +84,15 @@ export class MongoController<T extends IBaseMongoResource> implements IResourceC
   }
 
   /**
+   * Count the number of matching records.
+   * @param {{}} filter
+   * @returns {Promise<number>}
+   */
+  public async getCount(filter: {}): Promise<number> {
+    return await getModel(this.getTableName()).find(filter).count();
+  }
+
+  /**
    * Get the table name for record type.
    * @returns {string}
    */

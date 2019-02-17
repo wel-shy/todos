@@ -219,6 +219,19 @@ describe("todo", () => {
         });
     });
 
+    it("Should get all todos matching page options", (done) => {
+      axios.get(`${URLS.TEST}/todo/1/10`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
+        .then((res: AxiosResponse) => {
+          expect(res.data.payload.count).to.be.greaterThan(0);
+          expect(res.data.payload.resources.length).to.be.lessThan(11);
+          done();
+        });
+    });
+
     it("Should get a todo by id", (done) => {
       axios.get(`${URLS.TEST}/todo/${todo._id}`, {
         headers: {

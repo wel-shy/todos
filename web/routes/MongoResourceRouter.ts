@@ -46,7 +46,7 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
   public addDefaultRoutes(): void {
     this.addRoute("/:id", HTTPMethods.GET, this.show);
     this.addRoute("/:id", HTTPMethods.DELETE, this.destroy);
-    this.addRoute("/:page/:size", HTTPMethods.GET, this.paged);
+    this.addRoute("/:page/:limit", HTTPMethods.GET, this.paged);
     this.addRoute("/update", HTTPMethods.POST, this.update);
     this.addRoute("/", HTTPMethods.POST, this.store);
     this.addRoute("/", HTTPMethods.GET, this.index);
@@ -137,15 +137,15 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     const size: number = parseInt(req.params.limit, 10) || 0;
     const q: any = req.query;
     const filter: any = {};
+    let count: number = 0;
+    const skip: number = (page - 1) * size || 0;
+    let resources: T[];
 
     Object.keys(q).forEach((key: string) => {
       filter[key] = q[key];
     });
-
+    
     if (isNaN(page) || isNaN(size)) { return next(new Error("400")); }
-
-    const skip: number = (page - 1) * size || 0;
-    let resources: T[];
 
     if (err) { return next(err); }
 
@@ -157,12 +157,14 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
         resources = await cont.findManyWithFilter(filter , {skip, limit: size});
       }
 
+      count = await cont.getCount(filter);
+
     } catch (e) {
       e.message = "500";
       return next(e);
     }
 
-    return res.json(new Reply(200, "success", false, resources));
+    return res.json(new Reply(200, "success", false, { count, resources }));
   }
 
   public async show(req: e.Request, res: e.Response, next: e.NextFunction): Promise<void | e.Response> {

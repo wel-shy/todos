@@ -18,6 +18,8 @@ export interface IResourceController<T extends IBaseMongoResource> {
     skip: number,
   }): Promise<T[]>;
 
+  getCount(filter: {}): Promise<number>;
+
   setTableName(table: string): void;
   getTableName(): string;
 }
