@@ -147,6 +147,7 @@ describe("todo", () => {
     let user: IUser;
     let token: string;
     let todo: ITodo;
+    let archivedTodo: ITodo;
 
     before(async () => {
       user = await userController.store({
@@ -154,12 +155,21 @@ describe("todo", () => {
         password: "secret",
         username: "tester-todo-api",
       });
+      const todoData: any = {
+        archived: true,
+        done: true,
+        task: "todo",
+        userId: user._id,
+      };
+
+      archivedTodo = await todoController.store(todoData);
 
       token = authController.generateToken(user);
     });
 
     after(async () => {
       await userController.destroy(user._id);
+      await  todoController.destroy(archivedTodo._id);
     });
 
     it("Should store a todo item", (done) => {
@@ -187,8 +197,23 @@ describe("todo", () => {
         },
       })
         .then((res: AxiosResponse) => {
-          res.data.payload.forEach((todo: ITodo) => {
-            expect(todo.userId).to.equal(user._id.toString());
+          res.data.payload.forEach((t: ITodo) => {
+            expect(t.userId).to.equal(user._id.toString());
+          });
+          done();
+        });
+    });
+
+    it("Should get all todos matching query", (done) => {
+      axios.get(`${URLS.TEST}/todo?archived=true`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
+        .then((res: AxiosResponse) => {
+          expect(res.data.payload.length).to.be.greaterThan(0);
+          res.data.payload.forEach((t: ITodo) => {
+            expect(t.archived).to.equal(true);
           });
           done();
         });

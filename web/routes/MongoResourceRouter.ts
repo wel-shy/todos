@@ -4,13 +4,13 @@ import {IResourceController} from "../controllers/IResourceController";
 import {HTTPMethods} from "../HTTPMethods";
 import checkAdmin from "../middleware/Admin";
 import {checkToken} from "../middleware/Authenticate";
+import checkPermission from "../middleware/UserPermission";
 import {Reply} from "../Reply";
 import IBaseMongoResource from "../schemas/IBaseMongoResource";
 import {IUser} from "../schemas/User";
 import {BaseRouter} from "./BaseRouter";
-import IResourceRouter from "./IResourceRouter";
-import checkPermission from "../middleware/UserPermission";
 import {getSchema} from "./Index";
+import IResourceRouter from "./IResourceRouter";
 import RouterSchema from "./RouterSchema";
 
 export default class MongoResourceRouter<T extends IBaseMongoResource>
@@ -104,6 +104,12 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     const cont: IResourceController<T> = ControllerFactory.getController(routeSchema.table);
     const err: Error = BaseRouter.errorCheck(res);
     let resources: T[];
+    const q: any = req.query;
+    const filter: any = {};
+
+    Object.keys(q).forEach((key: string) => {
+      filter[key] = q[key];
+    });
 
     if (err) { return next(err); }
 
@@ -111,7 +117,8 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
       if (res.locals.admin) {
         resources = await cont.getAll();
       } else {
-        resources = await cont.findManyWithFilter({userId: res.locals.user.id});
+        filter.userId = res.locals.user.id;
+        resources = await cont.findManyWithFilter(filter);
       }
 
     } catch (e) {
@@ -128,8 +135,14 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     const err: Error = BaseRouter.errorCheck(res);
     const page: number = parseInt(req.params.page, 10) || 0;
     const size: number = parseInt(req.params.limit, 10) || 0;
+    const q: any = req.query;
+    const filter: any = {};
 
-    if (isNaN(page) || isNaN(size)) return next(new Error("400"));
+    Object.keys(q).forEach((key: string) => {
+      filter[key] = q[key];
+    });
+
+    if (isNaN(page) || isNaN(size)) { return next(new Error("400")); }
 
     const skip: number = (page - 1) * size || 0;
     let resources: T[];
@@ -138,9 +151,10 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
 
     try {
       if (res.locals.admin) {
-        resources = await cont.getAll();
+        resources = await cont.findManyWithFilter(filter);
       } else {
-        resources = await cont.findManyWithFilter({userId: res.locals.user.id} , {skip, limit: size});
+        filter.userId = res.locals.user.id;
+        resources = await cont.findManyWithFilter(filter , {skip, limit: size});
       }
 
     } catch (e) {
