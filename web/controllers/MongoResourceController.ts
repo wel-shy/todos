@@ -40,10 +40,21 @@ export class MongoController<T extends IBaseMongoResource> implements IResourceC
   /**
    * Find a record matching search params
    * @param {{}} filter
+   * @param options
    * @returns {Promise<T[]>}
    */
-  public async findManyWithFilter(filter: {}): Promise<T[]> {
-    return await getModel(this.getTableName()).find(filter) as T[];
+  public async findManyWithFilter(filter: {}, options?: {
+    skip: number,
+    limit: number,
+  }): Promise<T[]> {
+    if (!options) {
+      return await getModel(this.getTableName())
+        .find(filter) as T[];
+    }
+    return await getModel(this.getTableName())
+      .find(filter)
+      .skip(options.skip)
+      .limit(options.limit) as T[];
   }
 
   /**

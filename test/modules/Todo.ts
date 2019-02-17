@@ -114,7 +114,32 @@ describe("todo", () => {
             expect(t.userId.toString()).to.equal(secondUser._id.toString());
           });
           done();
-        })
+        });
+    });
+
+    it("Should return null when page options over max", (done) => {
+      const options = {
+        limit: 10,
+        skip: 1000,
+      };
+      todoController.findManyWithFilter({userId: secondUser._id}, options)
+        .then((todos: ITodo[]) => {
+          expect(todos.length).to.equal(0);
+          done();
+        });
+    });
+
+    it("Should return todos matching page options", (done) => {
+      const options = {
+        limit: 10,
+        skip: 0,
+      };
+      todoController.findManyWithFilter({userId: secondUser._id}, options)
+        .then((todos: ITodo[]) => {
+          expect(todos.length).to.be.greaterThan(0);
+          expect(todos.length).to.be.lessThan(11);
+          done();
+        });
     })
   });
 

@@ -13,7 +13,10 @@ export interface IResourceController<T extends IBaseMongoResource> {
   destroy(id: Schema.Types.ObjectId | string): Promise<void>;
 
   findOneWithFilter(filter: {}): Promise<T>;
-  findManyWithFilter(filter: {}): Promise<T[]>;
+  findManyWithFilter(filter: {}, options?: {
+    limit: number,
+    skip: number,
+  }): Promise<T[]>;
 
   setTableName(table: string): void;
   getTableName(): string;

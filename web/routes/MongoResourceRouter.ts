@@ -46,6 +46,7 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
   public addDefaultRoutes(): void {
     this.addRoute("/:id", HTTPMethods.GET, this.show);
     this.addRoute("/:id", HTTPMethods.DELETE, this.destroy);
+    this.addRoute("/:page/:size", HTTPMethods.GET, this.paged);
     this.addRoute("/update", HTTPMethods.POST, this.update);
     this.addRoute("/", HTTPMethods.POST, this.store);
     this.addRoute("/", HTTPMethods.GET, this.index);
@@ -111,6 +112,35 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
         resources = await cont.getAll();
       } else {
         resources = await cont.findManyWithFilter({userId: res.locals.user.id});
+      }
+
+    } catch (e) {
+      e.message = "500";
+      return next(e);
+    }
+
+    return res.json(new Reply(200, "success", false, resources));
+  }
+
+  public async paged(req: e.Request, res: e.Response, next: e.NextFunction): Promise<void | e.Response> {
+    const routeSchema: RouterSchema = getSchema(req.originalUrl);
+    const cont: IResourceController<T> = ControllerFactory.getController(routeSchema.table);
+    const err: Error = BaseRouter.errorCheck(res);
+    const page: number = parseInt(req.params.page, 10) || 0;
+    const size: number = parseInt(req.params.limit, 10) || 0;
+
+    if (isNaN(page) || isNaN(size)) return next(new Error("400"));
+
+    const skip: number = (page - 1) * size || 0;
+    let resources: T[];
+
+    if (err) { return next(err); }
+
+    try {
+      if (res.locals.admin) {
+        resources = await cont.getAll();
+      } else {
+        resources = await cont.findManyWithFilter({userId: res.locals.user.id} , {skip, limit: size});
       }
 
     } catch (e) {
