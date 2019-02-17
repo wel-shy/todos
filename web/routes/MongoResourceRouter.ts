@@ -47,6 +47,7 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     this.addRoute("/:id", HTTPMethods.GET, this.show);
     this.addRoute("/:id", HTTPMethods.DELETE, this.destroy);
     this.addRoute("/:page/:limit", HTTPMethods.GET, this.paged);
+    this.addRoute("/search/:field/:term", HTTPMethods.GET, this.search);
     this.addRoute("/update", HTTPMethods.POST, this.update);
     this.addRoute("/", HTTPMethods.POST, this.store);
     this.addRoute("/", HTTPMethods.GET, this.index);
@@ -144,7 +145,7 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     Object.keys(q).forEach((key: string) => {
       filter[key] = q[key];
     });
-    
+
     if (isNaN(page) || isNaN(size)) { return next(new Error("400")); }
 
     if (err) { return next(err); }
@@ -196,6 +197,39 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     }
 
     return res.json(new Reply(200, "success", false, resource));
+  }
+
+  public async search(req: e.Request, res: e.Response, next: e.NextFunction): Promise<void | e.Response> {
+    let resources: T[];
+    const routeSchema: RouterSchema = getSchema(req.originalUrl);
+    const cont: IResourceController<T> = ControllerFactory.getController(routeSchema.table);
+    const err: Error = BaseRouter.errorCheck(res);
+    const field = req.params.field;
+    const term = req.params.term;
+    const filter: any = {
+      userId: res.locals.user.id,
+    };
+
+    filter[field] = {$regex: `${term}`};
+
+    if (err) {
+      if (err.message === "403") {
+        if (!res.locals.admin) {
+          return next(err);
+        }
+      } else {
+        return next(err);
+      }
+    }
+
+    try {
+      resources = await cont.findManyWithFilter(filter);
+    } catch (e) {
+      e.message = "500";
+      return next(e);
+    }
+
+    return res.json(new Reply(200, "success", false, resources));
   }
 
   public async update(req: e.Request, res: e.Response, next: e.NextFunction): Promise<void | e.Response> {

@@ -147,6 +147,7 @@ describe("todo", () => {
     let user: IUser;
     let token: string;
     let todo: ITodo;
+    let randomTodo: ITodo;
     let archivedTodo: ITodo;
 
     before(async () => {
@@ -163,13 +164,20 @@ describe("todo", () => {
       };
 
       archivedTodo = await todoController.store(todoData);
+      randomTodo = await todoController.store({
+        archived: false,
+        done: false,
+        task: "rand",
+        userId: user._id,
+      });
 
       token = authController.generateToken(user);
     });
 
     after(async () => {
       await userController.destroy(user._id);
-      await  todoController.destroy(archivedTodo._id);
+      await todoController.destroy(archivedTodo._id);
+      await todoController.destroy(randomTodo._id);
     });
 
     it("Should store a todo item", (done) => {
@@ -228,6 +236,20 @@ describe("todo", () => {
         .then((res: AxiosResponse) => {
           expect(res.data.payload.count).to.be.greaterThan(0);
           expect(res.data.payload.resources.length).to.be.lessThan(11);
+          done();
+        });
+    });
+
+    it("Should search for a todo matching term", (done) => {
+      axios.get(`${URLS.TEST}/todo/search/task/rand`, {
+        headers: {
+          "x-access-token": token,
+        },
+      })
+        .then((res: AxiosResponse) => {
+          res.data.payload.forEach((result: ITodo) => {
+            expect(result.task.indexOf("rand")).to.greaterThan(-1);
+          });
           done();
         });
     });
