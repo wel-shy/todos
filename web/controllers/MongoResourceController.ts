@@ -53,6 +53,7 @@ export class MongoController<T extends IBaseMongoResource> implements IResourceC
     }
     return await getModel(this.getTableName())
       .find(filter)
+      .sort({dateAdded: -1})
       .skip(options.skip)
       .limit(options.limit) as T[];
   }
@@ -71,7 +72,9 @@ export class MongoController<T extends IBaseMongoResource> implements IResourceC
    * @returns {Promise<T[]>}
    */
   public async getAll(): Promise<T[]> {
-    return await getModel(this.getTableName()).find() as T[];
+    return await getModel(this.getTableName())
+      .find()
+      .sort({dateAdded: -1})as T[];
   }
 
   /**
