@@ -92,7 +92,7 @@ export class MongoController<T extends IBaseMongoResource> implements IResourceC
    * @returns {Promise<number>}
    */
   public async getCount(filter: {}): Promise<number> {
-    return await getModel(this.getTableName()).find(filter).count();
+    return await getModel(this.getTableName()).find(filter).countDocuments();
   }
 
   /**

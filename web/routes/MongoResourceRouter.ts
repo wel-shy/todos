@@ -139,8 +139,10 @@ export default class MongoResourceRouter<T extends IBaseMongoResource>
     const q: any = req.query;
     const filter: any = {};
     let count: number = 0;
-    const skip: number = (page - 1) * size || 0;
+    let skip: number = (page - 1) * size || 0;
     let resources: T[];
+
+    if (skip < 0) { skip = 0; }
 
     Object.keys(q).forEach((key: string) => {
       filter[key] = q[key];
